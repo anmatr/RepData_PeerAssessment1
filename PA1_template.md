@@ -15,6 +15,15 @@ Manually download the data and follow the following steps to reproduce.
 act <- read.csv("activity.csv")                              # read the data from file 'activity.csv'
 ```
 
+```
+## Warning in file(file, "rt"): cannot open file 'activity.csv': No such file
+## or directory
+```
+
+```
+## Error in file(file, "rt"): cannot open the connection
+```
+
 2. Transform the date string to a date in the data frame with:
 
 ```r
@@ -59,11 +68,6 @@ median(steps$steps)
 
 ###What is the average daily activity pattern?
 The time series plot of the 5-minute interval and the average number of steps taken, averaged accross all days:
-
-```
-## Error in get(as.character(FUN), mode = "function", envir = envir): object 'FUN' of mode 'function' was not found
-```
-
 ![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7-1.png) 
 
 The maximum number of steps is in interval:
