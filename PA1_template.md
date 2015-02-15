@@ -1,56 +1,46 @@
 ---
-title: "Reproducible Research - Peer Assignment 1"
-output: html_document
+title: "Reproducible Research: - Peer Assignment 1"
+output:
+
+  html_document
+  keep_md: true
 ---
+# Reproducible Research: - Peer Assignment 1
 
 The given data from [Activity monitoring data](https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip) will be processed. The assignment is to answer a couple of questions.
 
-Manually download the data and follow the following steps to reproduce.
+Manually download the data, place the file in the current working directory and follow the following steps to reproduce.
 
-###Loading and preprocessing the data
-1. Load the data with:
-
+## Loading and preprocessing the data
+ - Load the data with:
 
 ```r
+unzip("activity.zip")
 act <- read.csv("activity.csv")                              # read the data from file 'activity.csv'
 ```
-
-```
-## Warning in file(file, "rt"): cannot open file 'activity.csv': No such file
-## or directory
-```
-
-```
-## Error in file(file, "rt"): cannot open the connection
-```
-
-2. Transform the date string to a date in the data frame with:
+ - Transform the date string to a date in the data frame with:
 
 ```r
 act$date <- as.Date(act$date, format="%Y-%m-%d")             # transform the date column into a type date
 ```
 
 
-###What is mean total number of steps taken per day?
-First we ignore any data with missing values (NA's) and produce a new data set called act_clean
+## What is mean total number of steps taken per day?
+ - First we ignore any data with missing values (NA's) and produce a new data set called act_clean and then calculate the total number of steps taken per day.
 
 ```r
 act_clean <- na.omit(act)                                    # remove NA's
-```
-The mean total number of steps per day is:
-
-```r
 steps <- aggregate(steps~date, data=act_clean, FUN=sum)      # sum steps per date
 ```
-This will be the histogram for the steps over the given dates:
-![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-1.png) 
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+ - This will be the histogram for the steps over the given dates:
 
-The mean and median number of steps taken per day is:
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png) 
+
+ - The mean and median number of steps taken per day is:
 
 ```r
-mean(steps$steps)
+mean(steps$steps)                                         # The mean of all steps.
 ```
 
 ```
@@ -58,7 +48,7 @@ mean(steps$steps)
 ```
 
 ```r
-median(steps$steps)
+median(steps$steps)                                       # The median of all steps.
 ```
 
 ```
@@ -66,33 +56,36 @@ median(steps$steps)
 ```
 
 
-###What is the average daily activity pattern?
-The time series plot of the 5-minute interval and the average number of steps taken, averaged accross all days:
-![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7-1.png) 
+## What is the average daily activity pattern?
+ - The time series plot of the 5-minute interval and the average number of steps taken, averaged accross all days:
+![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6-1.png) 
 
-The maximum number of steps is in interval:
+ - The maximum number of steps is in interval.
 
 ```r
-daily[which.max(daily$steps),1]
+daily[which.max(daily$steps),1]                           # The interval with maximum of steps taken.
 ```
 
 ```
 ## [1] 835
 ```
 
-###Imputing missing values
-1. The total number of missing values in the original dataframe is:
+That means over all days at 8:35 o'clock most of the steps are taken.
+
+## Imputing missing values
+ - The total number of missing values in the original dataframe is:
 
 ```r
-sum(!complete.cases(act))
+sum(!complete.cases(act))                                 # Calculate the total number of missing values.
 ```
 
 ```
 ## [1] 2304
 ```
-2. To fill the missing values in the dataframe the 
 
-3. The new data set 'act.new' will be created by applying this functions.
+ - To fill the missing values in the dataframe the approach is to use the mean of amount of steps taken per interval throughout all days.
+
+ - The new data set 'act.new' will be created by applying the following steps:
 
 ```r
 act.na <- act[is.na(act$steps),]                                                # create an 'na' data set which NA observations
@@ -102,13 +95,14 @@ names(act.m)[2] <- "steps"                                                      
 act.new <- rbind(act[!is.na(act$steps),],act.m[c("date", "steps", "interval")]) # create the new data set
 ```
 
-This will be the histogram for the steps over the given dates:
-![plot of chunk unnamed-chunk-11](figure/unnamed-chunk-11-1.png) 
+ - This will be the histogram for the steps over the given dates:
 
-The mean and median number of steps taken per day is:
+![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-10-1.png) 
+
+ - The mean and median number of steps taken per day is:
 
 ```r
-mean(steps.new$steps)
+mean(steps.new$steps)                                     # The mean of all steps.  
 ```
 
 ```
@@ -116,17 +110,17 @@ mean(steps.new$steps)
 ```
 
 ```r
-median(steps.new$steps)
+median(steps.new$steps)                                   # The median of all steps.
 ```
 
 ```
 ## [1] 10766.19
 ```
-As you can see only the median differs to the orgiginal data set with missing values, the mean is the same.
-The impact of imputing missing data on the estimate of the total daily number of steps is that the histogram bars are higher in the latter histogram, i.e. the height for the longest column in the histogram has increased from 7 to 10. This has a stronger effect on the taller columns than the lower columns as a higher number is added.
+Only the median differs to the original data set with missing values, the mean is the same.
+The impact of imputing missing data on the estimate of the total daily number of steps is that all days have data, the histogramis more dense.
 
-###Are there differences in activity patterns between weekdays and weekends?
-1. The function `weekdays` is now used to enhance the data with an additional variable called *weekday* which flags a day either as workday or weekday.
+## Are there differences in activity patterns between weekdays and weekends?
+ - The function `weekdays` is now used to enhance the data with an additional variable called *weekday* which flags a day either as workday or weekday.
 
 ```r
 act.new$date <- as.Date(act.new$date, format="%Y-%m-%d")                      # transform the date string into a date type
@@ -137,7 +131,7 @@ act.new$weekday <- sapply(act.new$date, FUN = weekday)                        # 
 act.new$weekday <- as.factor(act.new$weekday)                                 # transform the new column into a factor type
 ```
 
-2. The panel plot blow now confronts the activity pattern on workdays with weekdays. On each panel it shows the average steps taken throughout the measured 5 minute intervals (5 o'clock appears as 500, 10 o'clock as 1000). It shows that there is a morning rush (possibly to work?) on weekdays, a mostly calm activity throughout the day and a small peak around 7 pm (possibly going home). On weekends the activity is more balanced throughout the day and it starts slightly later around 7 am but lats longer till after 8 pm.
+ - The panel plot blow now confronts the activity pattern on workdays with weekdays. On each panel it shows the average steps taken throughout the measured 5 minute intervals (5 o'clock appears as 500, 10 o'clock as 1000). It shows that there is a morning rush (possibly to work?) on weekdays, a mostly calm activity throughout the day and a small peak around 7 pm (possibly going home). On weekends the activity is more balanced throughout the day and it starts slightly later around 7 am but lats longer till after 8 pm.
 
 
 ```r
@@ -148,4 +142,4 @@ steps.new <- aggregate(. ~ interval + weekday, data = act.new, FUN = "mean")[c("
 xyplot(steps~interval|weekday, steps.new, type="l", xlab="Interval", ylab="Number of steps", layout=c(1,2))
 ```
 
-![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-14-1.png) 
+![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-13-1.png) 
